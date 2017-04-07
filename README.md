@@ -1,5 +1,5 @@
 # SMSremind
-## Chipper, Scott, Joey Jake 
+## Chipper, Scott, Joey, and Jake 
 
 ```
 create [list name]	                # creates a list
