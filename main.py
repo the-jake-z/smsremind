@@ -19,6 +19,7 @@ def show_lists(from_number, full_message):
     l = Lists.objects(subs=[from_number])
     return '\n'.join('{0}. {1}'.format(i + 1, l[i].name) for i in range(l.count()))
 
+
 def create_list(from_number, full_message):
     cmd, name = full_message.split(' ')
     l = Lists(subs=[from_number], items=[], name=name).save()
@@ -53,7 +54,8 @@ def remove_item(from_number, full_message):
 def list_contents(from_number, full_message):
     cmd, list_name = full_message.split(' ')
     l = Lists.objects(subs=[from_number], name=list_name).first()
-    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(len(l.items))])
+    length = len(l.items)
+    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'Nothing. :('
 
 
 def add_sub(from_number, full_message):
