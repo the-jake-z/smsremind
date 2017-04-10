@@ -37,21 +37,31 @@ def add_item(from_number, full_message):
     return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
 
 
-def remove_item(full_message):
-    pass
+def remove_item(from_number, full_message):
+    cmd, list_name, index = full_message.split(' ')
+    index = int(index) - 1
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l.items.pop(index)
+    l.save()
+    return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
 
 
 def list_contents(from_number, full_message):
     cmd, list_name = full_message.split(' ')
     l = Lists.objects(subs=[from_number], name=list_name).first()
-    return '\n'.join(["{0}. {1}".format(i, l.items[i]) for i in range(len(l.items))])
+    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(len(l.items))])
 
 
-def add_sub(full_message):
-    pass
+def add_sub(from_number, full_message):
+    cmd, list_name, phone = full_message.split(' ')
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l.subs.append(phone)
+    l.save()
+
+    return 'added \"{phone}\" to \"{list_name}\"'
 
 
-def remove_sub(full_message):
+def remove_sub(from_number, full_message):
     pass
 
 
@@ -71,7 +81,8 @@ def help_message(from_number, full_message):
     sub [list] [phone]
     unsub [list] [phone]
     subs
-    stop
+    s
+    h
     """
 
 commands = {
@@ -82,8 +93,8 @@ commands = {
     'ls': list_contents,
     'sub': add_sub,
     'unsub': remove_sub,
-    'stop': stop,
-    'help': help_message
+    's': stop,
+    'h': help_message
 }
 
 
