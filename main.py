@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect
 from mongoengine import *
 from config import *
-from twilio.twiml.voice_response import VoiceResponse
+from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 app.config.from_object(os.environ.get('CONFIG_CLASS', 'config.DevelopmentConfig'))
@@ -57,7 +57,7 @@ commands = {
 
 
 def build_reply(message):
-    resp = VoiceResponse()
+    resp = MessagingResponse()
     resp.message(message)
     return str(resp)
 
