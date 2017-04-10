@@ -31,7 +31,7 @@ def delete_list(from_number, full_message):
 def add_item(from_number, full_message):
     cmd, list_name, item = full_message.split(' ')
     l = Lists.objects(subs=[from_number], name=list_name).first()
-    l.items.add(item)
+    l.items.append(item)
     l.save()
 
     return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
