@@ -8,17 +8,24 @@ app.config.from_object(os.environ.get('CONFIG_CLASS', 'config.DevelopmentConfig'
 
 connect(host=app.config['MONGODB_SETTINGS']['host'] or None)
 
-def Lists(Document):
+
+class Lists(Document):
     subs = ListField(StringField())
     items = ListField(StringField())
+    name = StringField()
 
 
-def create_list(full_message):
-    pass
+def create_list(from_number, full_message):
+    cmd, name = full_message.split(' ')
+    l = Lists(subs=[from_number], items=[], name=name).save()
+    return 'list \"{name}\" created'.format(name=name)
 
 
-def delete_list(full_message):
-    pass
+def delete_list(from_number, full_message):
+    cmd, name = full_message.split(' ')
+    l = Lists.objects(subs=[from_number], name=name).first()
+    l.delete()
+    return 'list \"{name}\" deleted'.format(name=name)
 
 
 def add_item(full_message):

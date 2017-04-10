@@ -1,5 +1,7 @@
 import unittest
-from main import commands
+import os
+os.environ['CONFIG_CLASS'] = 'config.TestingConfig'
+from main import commands, Lists
 
 """
 commands = {
@@ -21,10 +23,16 @@ class SMSRemindTests(unittest.TestCase):
         pass
 
     def test_create_list(self):
-        pass
+        message = commands['create']('708-287-0004', 'create groceries')
+        self.assertEqual(Lists.objects.count(), 1)
+        self.assertEqual(message, "list \"groceries\" created")
 
     def test_delete_list(self):
-        pass
+        create_message = commands['create']('708-287-0004', 'create groceries')
+        second_create = commands['create']('708-867-5309', 'create groceries')
+        delete_message = commands['delete']('708-287-0004', 'delete groceries')
+        self.assertEqual(Lists.objects.count(), 1)
+        self.assertEqual(delete_message, 'list \"groceries\" deleted')
 
     def test_add_item(self):
         pass
@@ -43,6 +51,9 @@ class SMSRemindTests(unittest.TestCase):
 
     def test_help(self):
         pass
+
+    def tearDown(self):
+        Lists.drop_collection()
 
 if __name__ == "__main__":
     unittest.main()
