@@ -36,6 +36,10 @@ def remove_item(full_message):
     pass
 
 
+def list_contents(from_number, full_message):
+    pass
+
+
 def add_sub(full_message):
     pass
 
@@ -56,6 +60,7 @@ def help_message(from_number, full_message):
     delete [list]
     add [list] [item]
     rm [list] [item index]
+    ls [list]
     sub [list] [phone]
     unsub [list] [phone]
     subs
@@ -67,6 +72,7 @@ commands = {
     'delete': delete_list,
     'add': add_item,
     'rm': remove_item,
+    'ls': list_contents,
     'sub': add_sub,
     'unsub': remove_sub,
     'stop': stop,
