@@ -1,12 +1,12 @@
 from flask import Flask, request, redirect
 from mongoengine import *
 from config import *
+from twilio.twiml.voice_response import VoiceResponse
 
 app = Flask(__name__)
 app.config.from_object(os.environ.get('CONFIG_CLASS', 'config.DevelopmentConfig'))
 
 connect(host=app.config['MONGODB_SETTINGS']['host'] or None)
-
 
 def Lists(Document):
     subs = ListField(StringField())
@@ -56,10 +56,15 @@ commands = {
 }
 
 
+def build_reply(message):
+    resp = VoiceResponse()
+    resp.message(message)
+    return str(resp)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def listener():
-    print("hello, world")
-    return "success"
+    return build_reply("Greetings from SMSRemind")
 
 if __name__ == '__main__':
     debug = not app.config['CONFIGURATION'] == "PRODUCTION"
