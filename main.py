@@ -56,10 +56,11 @@ commands = {
 }
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def listener():
     print("hello, world")
     return "success"
 
 if __name__ == '__main__':
-    app.run(debug=True, port=int(app.config['PORT']))
+    debug = not app.config['CONFIGURATION'] == "PRODUCTION"
+    app.run(debug=debug, port=app.config['PORT'])
