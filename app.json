@@ -8,6 +8,14 @@
 			"description" : "Tell the application to run in production mode",
 			"value" : "config.ProductionConfig"
 		},
+		"TWILIO_SID": {
+			"description":"Twilio Accout SID",
+			"value":""
+		},
+		"TWILIO_AUTH_TOKEN":{
+			"description":"Twilio Auth Token",
+			"value":""
+		},
 		"SECRET_TOKEN" : {
 			"description" : "A secret key to verify the validity of POST requests",
 			"generator" : "secret"
