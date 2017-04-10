@@ -55,10 +55,11 @@ commands = {
     'help': help
 }
 
+
 @app.route('/', methods=['GET','POST'])
 def listener():
     print("hello, world")
     return "success"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=int(app.config['PORT']))
