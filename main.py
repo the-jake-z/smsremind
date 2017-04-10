@@ -28,8 +28,13 @@ def delete_list(from_number, full_message):
     return 'list \"{name}\" deleted'.format(name=name)
 
 
-def add_item(full_message):
-    pass
+def add_item(from_number, full_message):
+    cmd, list_name, item = full_message.split(' ')
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l.items.add(item)
+    l.save()
+
+    return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
 
 
 def remove_item(full_message):
@@ -37,7 +42,9 @@ def remove_item(full_message):
 
 
 def list_contents(from_number, full_message):
-    pass
+    cmd, list_name = full_message.split(' ')
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    return '\n'.join(["{0}. {1}".format(i, l.items[i]) for i in range(len(l.items))])
 
 
 def add_sub(full_message):
@@ -88,7 +95,9 @@ def build_reply(message):
 
 @app.route('/', methods=['GET', 'POST'])
 def listener():
-    return build_reply(commands['help'](request.values.get('From', None), ''))
+    message = request.values.get('message', 'help')
+    cmd = message.split(' ')[0]
+    return build_reply(commands[cmd](request.values.get('From', None), message))
 
 if __name__ == '__main__':
     debug = not app.config['CONFIGURATION'] == "PRODUCTION"
