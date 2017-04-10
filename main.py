@@ -15,6 +15,10 @@ class Lists(Document):
     name = StringField()
 
 
+def show_lists(from_number, full_message):
+    l = Lists.objects(subs=[from_number])
+    return '\n'.join('{0}. {1}'.format(i + 1, l[i].name) for i in range(l.count()))
+
 def create_list(from_number, full_message):
     cmd, name = full_message.split(' ')
     l = Lists(subs=[from_number], items=[], name=name).save()
@@ -73,6 +77,7 @@ def help_message(from_number, full_message):
     return r"""
     SMSRemind
     commons ops:
+    lists
     create [list]
     delete [list]
     add [list] [item]
@@ -86,6 +91,7 @@ def help_message(from_number, full_message):
     """
 
 commands = {
+    'lists': show_lists,
     'create': create_list,
     'delete': delete_list,
     'add': add_item,
