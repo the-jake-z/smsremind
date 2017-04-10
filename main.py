@@ -48,8 +48,19 @@ def stop(full_message):
     pass
 
 
-def help(full_message):
-    pass
+def help_message(from_number, full_message):
+    return r"""
+    SMSRemind
+    commons ops:
+    create [list]
+    delete [list]
+    add [list] [item]
+    rm [list] [item index]
+    sub [list] [phone]
+    unsub [list] [phone]
+    subs
+    stop
+    """
 
 commands = {
     'create': create_list,
@@ -59,7 +70,7 @@ commands = {
     'sub': add_sub,
     'unsub': remove_sub,
     'stop': stop,
-    'help': help
+    'help': help_message
 }
 
 
@@ -71,7 +82,7 @@ def build_reply(message):
 
 @app.route('/', methods=['GET', 'POST'])
 def listener():
-    return build_reply("Greetings from SMSRemind")
+    return build_reply(commands['help'](request.values.get('From', None), ''))
 
 if __name__ == '__main__':
     debug = not app.config['CONFIGURATION'] == "PRODUCTION"
