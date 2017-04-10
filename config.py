@@ -23,8 +23,6 @@ class Config(object):
     }
     SECRET_KEY = "some really long secret key that will just get overriden"
     PORT = 8080,
-    TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN") or None
-    TWILIO_SID = os.environ.get("TWILIO_SID") or None
 
 
 class ProductionConfig(Config):
