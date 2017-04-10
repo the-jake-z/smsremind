@@ -63,4 +63,4 @@ def listener():
 
 if __name__ == '__main__':
     debug = not app.config['CONFIGURATION'] == "PRODUCTION"
-    app.run(debug=debug, port=app.config['PORT'])
+    app.run(debug=debug, port=app.config['PORT'], host="0.0.0.0")
