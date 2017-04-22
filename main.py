@@ -2,6 +2,7 @@ from flask import Flask, request, redirect
 from mongoengine import *
 from config import *
 from twilio.twiml.messaging_response import MessagingResponse
+import phonenumbers
 
 app = Flask(__name__)
 app.config.from_object(os.environ.get('CONFIG_CLASS', 'config.DevelopmentConfig'))
@@ -34,7 +35,7 @@ def delete_list(from_number, full_message):
 
 
 def add_item(from_number, full_message):
-    cmd, list_name, item = full_message.split(' ')
+    cmd, list_name, item = full_message.split(' ', maxsplit=2)
     l = Lists.objects(subs=[from_number], name=list_name).first()
     l.items.append(item)
     l.save()
@@ -52,7 +53,7 @@ def remove_item(from_number, full_message):
 
 
 def list_contents(from_number, full_message):
-    cmd, list_name = full_message.split(' ')
+    cmd, list_name = full_message.split(' ', maxsplit=2)
     l = Lists.objects(subs=[from_number], name=list_name).first()
     length = len(l.items)
     return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'Nothing. :('
@@ -60,6 +61,7 @@ def list_contents(from_number, full_message):
 
 def add_sub(from_number, full_message):
     cmd, list_name, phone = full_message.split(' ')
+    phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
     l = Lists.objects(subs=[from_number], name=list_name).first()
     l.subs.append(phone)
     l.save()
@@ -68,11 +70,30 @@ def add_sub(from_number, full_message):
 
 
 def remove_sub(from_number, full_message):
-    pass
+    cmd, list_name, index = full_message.split(' ')
+    index = int(index)
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    phone = l.subs[index]
+    l.subs.remove(phone)
+    l.save()
+
+    return 'removed \"{ohone}\" from \"{list_name}\"'
 
 
-def stop(full_message):
-    pass
+def list_subs(from_number, full_message):
+    cmd, list_name = full_message.split(' ')
+    l = Lists.objects(subs=[from_number], name=list_name).first()
+    length = len(l)
+    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'No subscribers'
+
+
+def stop(from_number, full_message):
+    lists = Lists.objects(subs=[from_number])
+    for temp in lists:
+        temp.subs.remove(from_number)
+        temp.save()
+
+    return 'thanks for using smsremind'
 
 
 def help_message(from_number, full_message):
@@ -86,7 +107,8 @@ def help_message(from_number, full_message):
     rm [list] [item index]
     ls [list]
     sub [list] [phone]
-    unsub [list] [phone]
+    lsub [list]
+    unsub [list] [phone index]
     subs
     s
     h
@@ -101,6 +123,7 @@ commands = {
     'ls': list_contents,
     'sub': add_sub,
     'unsub': remove_sub,
+    'lsub': list_subs,
     's': stop,
     'h': help_message
 }
