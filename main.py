@@ -17,7 +17,7 @@ class Lists(Document):
 
 
 def show_lists(from_number, full_message):
-    l = Lists.objects(subs=[from_number])
+    l = Lists.objects(subs=from_number)
     return '\n'.join('{0}. {1}'.format(i + 1, l[i].name) for i in range(l.count()))
 
 
