@@ -136,7 +136,7 @@ def build_reply(message):
 
 @app.route('/', methods=['GET', 'POST'])
 def listener():
-    message = request.values.get('Body', 'help')
+    message = request.values.get('Body', 'help').strip()
     cmd = message.split(' ')[0].lower()
     return build_reply(commands[cmd](request.values.get('From', None), message))
 
