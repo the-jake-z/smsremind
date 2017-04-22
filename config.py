@@ -27,7 +27,7 @@ class Config(object):
 
 class ProductionConfig(Config):
     CONFIGURATION = "PRODUCTION"
-    DEBUG = False
+    DEBUG = True
     PORT = int(os.environ.get('PORT', 5000))
     MONGODB_SETTINGS = {
         'host': os.environ.get('MONGODB_URI', 'localhost')
