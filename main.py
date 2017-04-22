@@ -61,9 +61,9 @@ def list_contents(from_number, full_message):
 
 def add_sub(from_number, full_message):
     cmd, list_name, phone = full_message.split(' ')
-    phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
+    phone = phonenumbers.format_number(phonenumbers.parse(phone, 'US'), phonenumbers.PhoneNumberFormat.E164)
     l = Lists.objects(subs=[from_number], name=list_name).first()
-    l.subs.append(phone)
+    l.subs.append(str(phone))
     l.save()
 
     return 'added \"{phone}\" to \"{list_name}\"'
@@ -109,7 +109,6 @@ def help_message(from_number, full_message):
     sub [list] [phone]
     lsub [list]
     unsub [list] [phone index]
-    subs
     s
     h
     """
@@ -125,7 +124,7 @@ commands = {
     'unsub': remove_sub,
     'lsub': list_subs,
     's': stop,
-    'h': help_message
+    'h': help_message,
 }
 
 
