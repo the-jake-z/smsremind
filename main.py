@@ -23,20 +23,20 @@ def show_lists(from_number, full_message):
 
 def create_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    l = Lists(subs=[from_number], items=[], name=name).save()
+    l = Lists(subs=from_number, items=[], name=name).save()
     return 'list \"{name}\" created'.format(name=name)
 
 
 def delete_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    l = Lists.objects(subs=[from_number], name=name).first()
+    l = Lists.objects(subs=from_number, name=name).first()
     l.delete()
     return 'list \"{name}\" deleted'.format(name=name)
 
 
 def add_item(from_number, full_message):
     cmd, list_name, item = full_message.split(' ', maxsplit=2)
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     l.items.append(item)
     l.save()
 
@@ -46,7 +46,7 @@ def add_item(from_number, full_message):
 def remove_item(from_number, full_message):
     cmd, list_name, index = full_message.split(' ')
     index = int(index) - 1
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     l.items.pop(index)
     l.save()
     return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
@@ -54,7 +54,7 @@ def remove_item(from_number, full_message):
 
 def list_contents(from_number, full_message):
     cmd, list_name = full_message.split(' ', maxsplit=2)
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     length = len(l.items)
     return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'Nothing. :('
 
@@ -62,7 +62,7 @@ def list_contents(from_number, full_message):
 def add_sub(from_number, full_message):
     cmd, list_name, phone = full_message.split(' ')
     phone = phonenumbers.format_number(phonenumbers.parse(phone, 'US'), phonenumbers.PhoneNumberFormat.E164)
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     l.subs.append(str(phone))
     l.save()
 
@@ -72,7 +72,7 @@ def add_sub(from_number, full_message):
 def remove_sub(from_number, full_message):
     cmd, list_name, index = full_message.split(' ')
     index = int(index)
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     phone = l.subs[index]
     l.subs.remove(phone)
     l.save()
@@ -82,13 +82,13 @@ def remove_sub(from_number, full_message):
 
 def list_subs(from_number, full_message):
     cmd, list_name = full_message.split(' ')
-    l = Lists.objects(subs=[from_number], name=list_name).first()
+    l = Lists.objects(subs=from_number, name=list_name).first()
     length = len(l)
     return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'No subscribers'
 
 
 def stop(from_number, full_message):
-    lists = Lists.objects(subs=[from_number])
+    lists = Lists.objects(subs=from_number)
     for temp in lists:
         temp.subs.remove(from_number)
         temp.save()
