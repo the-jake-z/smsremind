@@ -66,7 +66,7 @@ def add_sub(from_number, full_message):
     l.subs.append(str(phone))
     l.save()
 
-    return 'added \"{phone}\" to \"{list_name}\"'
+    return 'added \"{phone}\" to \"{list_name}\"'.format(phone=phone, list_name=list_name)
 
 
 def remove_sub(from_number, full_message):
@@ -77,7 +77,7 @@ def remove_sub(from_number, full_message):
     l.subs.remove(phone)
     l.save()
 
-    return 'removed \"{ohone}\" from \"{list_name}\"'
+    return 'removed \"{ohone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
 
 
 def list_subs(from_number, full_message):
