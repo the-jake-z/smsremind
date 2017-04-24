@@ -3,9 +3,9 @@
 
 ```
 create [list name]	                # creates a list
-delete [list name]
+delete [list name]                  # deletes a list
 add [list name] [item]			    # adds item to list
-rm [list name] [item no.]	    # deletes item from a list 
+rm [list name] [item no.]	        # deletes item from a list 
 sub [list name] [phone no.]         # adds a collaborator  
 unsub [list name] [phone no.]       # removes a collaborator from a list
 stop								# removes all list subscriptions
