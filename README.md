@@ -4,10 +4,10 @@
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ```
-create [list name]                  # creates a list
+create [list name]	                # creates a list
 delete [list name]                  # deletes a list
-add [list name] [item]              # adds item to list
-rm [list name] [item no.]           # deletes item from a list 
+add [list name] [item]			    # adds item to list
+rm [list name] [item no.]	        # deletes item from a list 
 sub [list name] [phone no.]         # adds a collaborator  
 unsub [list name] [phone no.]       # removes a collaborator from a list
 subs                                # list all lists currently subscribed to
