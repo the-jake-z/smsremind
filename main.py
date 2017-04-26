@@ -17,7 +17,7 @@ class Lists(Document):
 
 
 def get_user_list(from_number, list_name):
-    return Lists(subs=from_number, name=list_name.lower()).first()
+    return Lists.objects(subs=from_number, name=list_name.lower()).first()
 
 
 def show_lists(from_number, full_message):
@@ -28,13 +28,13 @@ def show_lists(from_number, full_message):
 
 def create_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    Lists(subs=from_number, items=[], name=name).save()
+    Lists(subs=[from_number], items=[], name=name.lower()).save()
     return 'list \"{name}\" created'.format(name=name)
 
 
 def delete_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    l = get_user_list()
+    l = get_user_list(from_number, name)
     if l is not None:
         l.delete()
         message = 'list \"{name}\" deleted'.format(name=name)
@@ -103,9 +103,9 @@ def remove_sub(from_number, full_message):
         phone = l.subs[index]
         l.subs.remove(phone)
         l.save()
-        message = 'removed \"{ohone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
+        message = 'removed \"{phone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
     else:
-        message = 'unable to remove \"{phone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
+        message = 'unable to unsubscribe \"{phone}\" from \"{list_name}\"'.format(phone=index, list_name=list_name)
     return message
 
 
