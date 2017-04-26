@@ -114,7 +114,7 @@ def list_subs(from_number, full_message):
     l = get_user_list(from_number, list_name)
     if l is not None:
         length = len(l.subs) if l.subs else 0
-        message = '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else  \
+        message = '\n'.join(["{0}. {1}".format(i + 1, l.subs[i]) for i in range(length)]) if length > 0 else  \
             'No subscribers'
     else:
         message = 'unable to list subscribers'
