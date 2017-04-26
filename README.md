@@ -1,5 +1,7 @@
 # SMSremind
-## Chipper, Scott, Joey Jake 
+## Chipper, Scott, Joey, and Jake 
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ```
 create [list name]	                # creates a list
@@ -8,7 +10,8 @@ add [list name] [item]			    # adds item to list
 rm [list name] [item no.]	        # deletes item from a list 
 sub [list name] [phone no.]         # adds a collaborator  
 unsub [list name] [phone no.]       # removes a collaborator from a list
-stop								# removes all list subscriptions
+subs                                # list all lists currently subscribed to
+stop                                # removes all list subscriptions
 ```
 
 ## Tools
@@ -22,6 +25,7 @@ stop								# removes all list subscriptions
 
 ```
 {
+    "name":"groceries",
     "subs": [
         "708-287-0004",
         "205-799-9923",
@@ -43,7 +47,7 @@ stop								# removes all list subscriptions
 
 ### Create List
 
-** creates an empty list with sender as first subscriber**
+**creates an empty list with sender as first subscriber**
 
 ```
 create groceries

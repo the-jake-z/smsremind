@@ -21,13 +21,13 @@ class Config(object):
         'db': 'smsremind',
         'host': 'localhost'
     }
-    SECRET_KEY="some really long secret key that will just get overriden"
-    PORT = 8080
+    SECRET_KEY = "some really long secret key that will just get overriden"
+    PORT = 8080,
 
 
 class ProductionConfig(Config):
     CONFIGURATION = "PRODUCTION"
-    DEBUG = False
+    DEBUG = True
     PORT = int(os.environ.get('PORT', 5000))
     MONGODB_SETTINGS = {
         'host': os.environ.get('MONGODB_URI', 'localhost')

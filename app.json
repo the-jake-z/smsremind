@@ -1,0 +1,24 @@
+{
+	"name": "SMSremind",
+	"description": "SMS todo list application",
+	"repository" : "https://github.com/jzarob/smsremind",
+	"keywords" : ["python", "twilio", "SMS"],
+	"env" : {
+		"CONFIG_CLASS" : {
+			"description" : "Tell the application to run in production mode",
+			"value" : "config.ProductionConfig"
+		},
+		"SECRET_TOKEN" : {
+			"description" : "A secret key to verify the validity of POST requests",
+			"generator" : "secret"
+		}
+	},
+	"buildpacks" : [
+		{
+			"url" : "heroku/python"
+		}
+	],
+	"addons" : [
+		"mongolab:sandbox"
+	]
+}
