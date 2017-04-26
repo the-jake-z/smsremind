@@ -16,75 +16,109 @@ class Lists(Document):
     name = StringField()
 
 
+def get_user_list(from_number, list_name):
+    return Lists.objects(subs=from_number, name=list_name.lower()).first()
+
+
 def show_lists(from_number, full_message):
     l = Lists.objects(subs=from_number)
-    return '\n'.join('{0}. {1}'.format(i + 1, l[i].name) for i in range(l.count()))
+    length = l.count() if l else 0
+    return '\n'.join('{0}. {1}'.format(i + 1, l[i].name) for i in range(length)) if length > 0 else 'no lists'
 
 
 def create_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    l = Lists(subs=from_number, items=[], name=name).save()
+    Lists(subs=[from_number], items=[], name=name.lower()).save()
     return 'list \"{name}\" created'.format(name=name)
 
 
 def delete_list(from_number, full_message):
     cmd, name = full_message.split(' ')
-    l = Lists.objects(subs=from_number, name=name).first()
-    l.delete()
-    return 'list \"{name}\" deleted'.format(name=name)
+    l = get_user_list(from_number, name)
+    if l is not None:
+        l.delete()
+        message = 'list \"{name}\" deleted'.format(name=name)
+    else:
+        message = 'can\'t delete a list that doesn\'t exist!'
+    return message
 
 
 def add_item(from_number, full_message):
     cmd, list_name, item = full_message.split(' ', maxsplit=2)
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    l.items.append(item)
-    l.save()
 
-    return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
+    l = get_user_list(from_number, list_name)
+    if l is not None:
+        l.items.append(item)
+        l.save()
+        message = list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
+    else:
+        message = 'couldn\'t add \"{item}\" to \"{list}\"'.format(item=item, list=list_name)
+    return message
 
 
 def remove_item(from_number, full_message):
     cmd, list_name, index = full_message.split(' ')
+    # 1 indexed in text, 0 indexed in mongo
     index = int(index) - 1
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    l.items.pop(index)
-    l.save()
-    return list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
+    l = get_user_list(from_number, list_name)
+    if l is not None and -1 < index < len(l.items):
+        l.items.pop(index)
+        l.save()
+        message = list_contents(from_number, 'ls {list_name}'.format(list_name=list_name))
+    else:
+        message = 'couldn\'t remove item {index} from \"{list_name}\"'.format(index=index, list_name=list_name)
+    return message
 
 
 def list_contents(from_number, full_message):
     cmd, list_name = full_message.split(' ', maxsplit=2)
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    length = len(l.items)
-    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'Nothing. :('
+    l = get_user_list(from_number, list_name)
+    if l is not None:
+        length = len(l.items) if l.items else 0
+        message = '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else  \
+            'Nothing. :('
+    else:
+        message = 'you don\'t have list called {list_name}'.format(list_name=list_name)
+    return message
 
 
 def add_sub(from_number, full_message):
     cmd, list_name, phone = full_message.split(' ')
     phone = phonenumbers.format_number(phonenumbers.parse(phone, 'US'), phonenumbers.PhoneNumberFormat.E164)
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    l.subs.append(str(phone))
-    l.save()
-
-    return 'added \"{phone}\" to \"{list_name}\"'.format(phone=phone, list_name=list_name)
+    l = get_user_list(from_number, list_name)
+    if l is not None:
+        l.subs.append(str(phone))
+        l.save()
+        message = 'added \"{phone}\" to \"{list_name}\"'.format(phone=phone, list_name=list_name)
+    else:
+        message = 'unable to add {phone} to {list_name}'.format(phone=phone,list_name=list_name)
+    return message
 
 
 def remove_sub(from_number, full_message):
     cmd, list_name, index = full_message.split(' ')
-    index = int(index)
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    phone = l.subs[index]
-    l.subs.remove(phone)
-    l.save()
-
-    return 'removed \"{ohone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
+    index = int(index) - 1
+    l = get_user_list(from_number, list_name)
+    if l is not None and -1 < index < len(l.subs):
+        phone = l.subs[index]
+        l.subs.remove(phone)
+        l.save()
+        message = 'removed \"{phone}\" from \"{list_name}\"'.format(phone=phone, list_name=list_name)
+    else:
+        message = 'unable to unsubscribe \"{phone}\" from \"{list_name}\"'.format(phone=index, list_name=list_name)
+    return message
 
 
 def list_subs(from_number, full_message):
     cmd, list_name = full_message.split(' ')
-    l = Lists.objects(subs=from_number, name=list_name).first()
-    length = len(l)
-    return '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else 'No subscribers'
+    l = get_user_list(from_number, list_name)
+    if l is not None:
+        length = len(l.subs) if l.subs else 0
+        message = '\n'.join(["{0}. {1}".format(i + 1, l.items[i]) for i in range(length)]) if length > 0 else  \
+            'No subscribers'
+    else:
+        message = 'unable to list subscribers'
+    return message
 
 
 def stop(from_number, full_message):
